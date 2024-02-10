@@ -1,0 +1,16 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Jost', sans-serif;
+}
+body{
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url("../images/bths.jpg");
+ 
+  background-repeat: no-repeat;
+  background-attachment:fixed;
+  height: 100vh;
+  overflow: hidden;
+}
