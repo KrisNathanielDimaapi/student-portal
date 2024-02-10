@@ -37,7 +37,7 @@
             die("Error Add Data");
         }
 
-        header('location: adminDashboard.php');
+        header('location: reviews.php');
         exit;
     }
 
@@ -57,7 +57,7 @@
                <div class="am-head">
                 <h1>Add Review of Teaching Subject</h1>
                </div>
-               <a href="adminDashboard.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
+               <a href="reviews.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
                 <form class="am-body-box" action = "addReviews.php" autocomplete="off" method = "post"  id = "timeServiceForm">
                 <div>
                         <div>
@@ -67,8 +67,18 @@
                     </div>
                 <div class="am-row">
                         <div class="am-col-12">
-                            <p>Subject:</p>
-                            <input type="text" name="subject" id="subject" required>
+                        <p>Subject:</p>
+                        <select name="subject" id="subject" class="subject" required>
+                            <option></option>
+                            <?php 
+                            $classes = $connect->query("SELECT * FROM subjects order by subject asc ");
+                            while($row = $classes->fetch_array()):
+                                ?>
+                                <option value="<?php echo $row['subject'] ?>" <?php echo isset($subject) && $subject== $row['subject'] ? "selected" : '' ?>>
+                                    <?php echo ucwords($row['subject']) ?>
+                                </option>
+                            <?php endwhile; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="am-row">

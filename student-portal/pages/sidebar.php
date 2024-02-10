@@ -48,6 +48,12 @@
                 <span>View Grades</span>
             </a>
         </li>
+        <li>
+            <a href="teacherContact.php">
+            <i class="fa-solid fa-address-book"></i>
+                <span>Teacher's Contact</span>
+            </a>
+        </li>
         <li class="logout">
             <a href="logout.php">
                 <i class="fas fa-sign-out-alt"></i>
