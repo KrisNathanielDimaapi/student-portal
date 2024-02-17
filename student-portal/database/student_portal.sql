@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 10, 2024 at 04:42 AM
+-- Generation Time: Feb 17, 2024 at 07:13 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -64,7 +64,7 @@ CREATE TABLE `classes` (
 
 INSERT INTO `classes` (`id`, `levelsection`, `date_created`) VALUES
 (1, 'Fourth-A', '0000-00-00 00:00:00'),
-(12, 'Second-B', '0000-00-00 00:00:00');
+(12, 'Second-A', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -114,7 +114,12 @@ CREATE TABLE `reviews` (
 
 INSERT INTO `reviews` (`reviewID`, `email`, `subject`, `instructor`, `review`) VALUES
 (7, 'dbarrassej@narod.ru', 'SCIENCE', 'MR. KRIS NATHANIEL DIMAAPI', 'MAANGAS SIYA '),
-(8, 'dbarrassej@narod.ru', 'SCIENCE', 'MR. KRIS NATHANIEL DIMAAPI', 'MABAIT');
+(8, 'dbarrassej@narod.ru', 'SCIENCE', 'MR. KRIS NATHANIEL DIMAAPI', 'MABAIT'),
+(11, 'kndimaapi@gmail.com', 'Araling Panlipunan', 'hakdog', 'asdas'),
+(12, 'asd', 'Math', 'asdas', 'mahirap'),
+(13, 'asdas', 'Araling Panlipunan', 'asdas', 'asdasd'),
+(14, 'asdas', 'Math', 'asdas', 'asdasd'),
+(15, 'bene@gmail.com', 'Araling Panlipunan', 'asdsadsaddssagfdg', 'sagafdgdfgd');
 
 -- --------------------------------------------------------
 
@@ -139,8 +144,8 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `student_code`, `firstname`, `middlename`, `lastname`, `gender`, `address`, `class_id`, `date_created`) VALUES
-(33, '123124', 'Kris', 'Gabriel', 'Dimaapi', 'asd', 'San Pascual', ' Fourth', '2024-02-09 19:34:17'),
-(34, '123124', 'Kris', 'Gabriel', 'Dimaapi', 'asd', 'San Pascual', 'Second-B', '2024-02-09 19:54:19'),
+(33, '123124', 'sad', 'sdfsdsdf', 'nathanielsdf', 'asd', 'San Pascual', 'Second-A', '2024-02-09 19:34:17'),
+(34, '123124', 'sdfsdf', 'Gabrielsdfsdf', 'Dimaapi', 'asd', 'San Pascual', 'Fourth-B', '2024-02-09 19:54:19'),
 (35, 'sdf234234', 'asdasd', 'Gabrielasd', 'asf', 'sd', 'sdfsd', 'Fourth-B', '2024-02-09 20:50:42'),
 (36, '2141435', 'Nigga', 'asdfd', 'sdf', 'asd', 'asdsad', 'Fourth-C', '2024-02-09 21:34:14'),
 (37, '2141435', 'Nigga', 'asdfd', 'sdf', 'asd', 'asdsad', 'Fourth-A', '2024-02-10 09:35:11');
@@ -164,7 +169,36 @@ CREATE TABLE `subjects` (
 --
 
 INSERT INTO `subjects` (`id`, `subject_code`, `subject`, `description`, `date_created`) VALUES
-(1, '1106', 'Math', 'Math', '0000-00-00 00:00:00');
+(1, '1102', 'Math', 'Math', '0000-00-00 00:00:00'),
+(4, '1102', 'Science', ' Science', '0000-00-00 00:00:00'),
+(5, '1108', 'Araling Panlipunan', 'Jose Rizal', '0000-00-00 00:00:00'),
+(6, '', '', ' ', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teachers`
+--
+
+CREATE TABLE `teachers` (
+  `id` int(30) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `middlename` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `gender` varchar(255) NOT NULL,
+  `address` text NOT NULL,
+  `contact` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `teachers`
+--
+
+INSERT INTO `teachers` (`id`, `firstname`, `middlename`, `lastname`, `gender`, `address`, `contact`, `email`) VALUES
+(4, 'asdasd', 'Gabriel', 'Dimaapi', 'Male', 'sdad', '09491278814', 'asdsa'),
+(5, 'sdf', 'sdf', 'sdf', 'sdf', 'sadasdsad', 'sdf', 'asdfsdfs'),
+(6, 'sda', 'sad', 'd', 'sad', 'asdasd', 'sad', 'asdas');
 
 --
 -- Indexes for dumped tables
@@ -213,6 +247,12 @@ ALTER TABLE `subjects`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `teachers`
+--
+ALTER TABLE `teachers`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -244,7 +284,7 @@ ALTER TABLE `result_items`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `reviewID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `reviewID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `students`
@@ -256,7 +296,13 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `subjects`
 --
 ALTER TABLE `subjects`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `teachers`
+--
+ALTER TABLE `teachers`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
