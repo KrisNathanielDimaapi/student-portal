@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <div class="am-container">
         <div class="am-body">
             <div class="am-head">
-                <h1>Classes</h1>
+                <h1>Edit Subject</h1>
             </div>
             <a href="subject.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
             <form class="am-body-box" action="editSubject.php" autocomplete="off" method="post">

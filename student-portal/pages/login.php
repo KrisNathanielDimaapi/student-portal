@@ -71,7 +71,6 @@
           <label>Password</label>
         </div>
         
-        <div class="pass">Forgot Password?</div>
         <input type = "submit" id ="submitBtn" class = "mainBtn" name = "login" value = "LOG IN" onclick= "e.preventDefault()">
       </form>
     </div>

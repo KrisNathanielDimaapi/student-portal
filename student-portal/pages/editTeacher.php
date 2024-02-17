@@ -14,18 +14,19 @@ $firstname = "";
 $middlename = "";
 $lastname = "";
 $address = "";
-$class_id = "";
+$contact = "";
+$email = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if (!isset($_GET['id'])) {
-        header("location: student.php");
+        header("location: teacher.php");
         exit;
     }
 
     $id = $_GET['id'];
 
-    $sql = "SELECT * FROM students WHERE id = ?";
+    $sql = "SELECT * FROM teachers WHERE id = ?";
     $stmt = $connect->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     $row = $result->fetch_assoc();
     if (!$row) {
-        header('location: student.php');
+        header('location: teacher.php');
         exit;
     }
 
@@ -46,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $middlename = $row["middlename"];
     $lastname = $row["lastname"];
     $address = $row["address"];
-    $class_id = $row["class_id"];
+    $contact = $row["contact"];
+    $email = $row["email"];
 
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -55,16 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $middlename = isset($_POST['middlename']) ? $_POST['middlename'] : '';
     $lastname = isset($_POST['lastname']) ? $_POST['lastname'] : '';
     $address = isset($_POST['address']) ? $_POST['address'] : '';
-    $class_id = isset($_POST['class_id']) ? $_POST['class_id'] : '';
+    $contact = isset($_POST['contact']) ? $_POST['contact'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
 
-    if (empty($firstname) || empty($middlename) || empty($lastname) || empty($address) || empty($class_id)) {
+    if (empty($firstname) || empty($middlename) || empty($lastname) || empty($address) || empty($contact) || empty($email)) {
         echo "<script>alert('All fields cannot be empty');</script>";
         die();
     }
 
-    $sql = "UPDATE students SET firstname = ?, middlename = ?, lastname = ?, address = ?, class_id = ? WHERE id = ?";
+    $sql = "UPDATE teachers SET firstname = ?, middlename = ?, lastname = ?, address = ?, contact = ?, email = ? WHERE id = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("sssssi", $firstname, $middlename, $lastname, $address, $class_id, $id);
+    $stmt->bind_param("ssssssi", $firstname, $middlename, $lastname, $address, $contact,$email, $id);
     $stmt->execute();
 
     if ($stmt->affected_rows === -1) {
@@ -72,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         die();
     }
 
-    header("location: student.php");
+    header("location: teacher.php");
     exit;
 }
 ?>
@@ -91,49 +94,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <div class="am-container">
         <div class="am-body">
             <div class="am-head">
-                <h1>Edit Students</h1>
+                <h1>Edit Teacher Information</h1>
             </div>
             <a href="student.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
-            <form class="am-body-box" action="editStudent.php" autocomplete="off" method="post" id="timeServiceForm">
+            <form class="am-body-box" action="editTeacher.php" autocomplete="off" method="post" id="timeServiceForm">
                 <input type="hidden" name="id" value="<?php echo $id; ?>">
 
                 <div class="am-row">
-                    <div class="am-col-12">
+                    <div class="am-col-6">
                         <p>First Name:</p>
                         <input type="text" name="firstname" id="firstname" value="<?php echo $firstname; ?>" required>
                     </div>
-                </div>
-                <div class="am-row">
-                    <div class="am-col-12">
+                    <div class="am-col-6">
                         <p>Middle Name:</p>
                         <input type="text" name="middlename" id="middlename" value="<?php echo $middlename; ?>" required>
                     </div>
                 </div>
                 <div class="am-row">
-                    <div class="am-col-12">
+                    <div class="am-col-6">
                         <p>Last Name:</p>
                         <input type="text" name="lastname" id="lastname" value="<?php echo $lastname; ?>" required>
+                    </div>
+                    <div class="am-col-6">
+                        <p>Contact:</p>
+                        <input type="text" name="contact" id="contact" value="<?php echo $contact; ?>" required>
+                    </div>
+                </div>
+                <div class="am-row">
+                    <div class="am-col-12">
+                        <p>Email:</p>
+                        <input type="text" name="email" id="email" value="<?php echo $email; ?>" required>
                     </div>
                 </div>
                 <div class="am-row">
                     <div class="am-col-12">
                         <p>Address:</p>
                         <input type="text" name="address" id="address" value="<?php echo $address; ?>" required>
-                    </div>
-                </div>
-                <div class="am-row">
-                    <div class="am-col-12">
-                        <p>Class:</p>
-                        <select name="class_id" id="class_id" class="class_id" required>
-                            <?php 
-                            $classes = $connect->query("SELECT * FROM classes order by levelsection asc ");
-                            while($row = $classes->fetch_array()):
-                                ?>
-                                <option value="<?php echo $row['levelsection'] ?>" <?php echo isset($class_id) && $class_id == $row['levelsection'] ? "selected" : ''; ?>>
-                                    <?php echo ucwords($row['levelsection']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
                     </div>
                 </div>
                 <div class="buttonCont">

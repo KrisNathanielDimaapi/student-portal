@@ -52,6 +52,12 @@
             </a>
         </li>
         <li>
+            <a href="teacher.php">
+            <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Teacher Information</span>
+            </a>
+        </li>
+        <li>
             <a href="accountManagement.php">
             <i class="fa-solid fa-address-card"></i>
                 <span>Account Management</span>

@@ -54,7 +54,7 @@
         <div class="am-container">
             <div class="am-body">
                <div class="am-head">
-                <h1>Classes</h1>
+                <h1>Add Subject</h1>
                </div>
                <a href="subject.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
                 <form class="am-body-box" action = "addSubject.php" autocomplete="off" method = "post"  id = "timeServiceForm">

@@ -50,8 +50,8 @@
         </li>
         <li>
             <a href="teacherContact.php">
-            <i class="fa-solid fa-address-book"></i>
-                <span>Teacher's Contact</span>
+            <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Teacher Information</span>
             </a>
         </li>
         <li class="logout">
