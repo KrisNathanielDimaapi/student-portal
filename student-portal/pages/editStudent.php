@@ -126,7 +126,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     </div>
                     <div class="am-col-6">
                         <p>Section:</p>
-                        <input type="text" name="level_section" id="level_section" value="<?php echo $level_section; ?>" required>
+                        <select name="level_section" id="level_section" class="level_section" required>
+                            <option></option>
+                            <?php 
+                            $classes = $connect->query("SELECT * FROM classes order by level asc, section asc ");
+                            while($row = $classes->fetch_assoc()):
+                                ?>
+                                <option value="<?php echo $row['level'] . $row['section']; ?>">
+                                    <?php echo ucwords($row['level'] . ' - ' . $row['section']); ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                 </div>
                 <div class="buttonCont">

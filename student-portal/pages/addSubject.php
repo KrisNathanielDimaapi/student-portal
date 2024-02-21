@@ -1,26 +1,25 @@
 <?php
-    $host = "localhost";
-    $username  = "root";
-    $password = "";
-    $db = "student_portal";
-    
-    $connect = new mysqli($host, $username, $password, $db);
-    if ($connect->connect_error) {
-        die("Error Connect to DB" . $connect->connect_error);
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
     }
-   
-    $subject_code = "";
-    $subject = "";
+
+    include("../phpFiles/dbConnect.php");
+    
+    
+    $teacherID = "";
+    $subjectCode = "";
+    $subject_name = "";
     $description = "";
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-        $subject_code = $_POST['subject_code'];
-        $subject = $_POST['subject'];
+        $teacherID = $_POST['teacherID'];
+        $subjectCode = $_POST['subjectCode'];
+        $subject_name = $_POST['subject_name'];
         $description = $_POST['description'];
 
 
-        if($subject_code == "" || $subject == "" ||  $description == ""){
+        if($teacherID == "" || $subjectCode == "" ||  $subject_name == "" || $description == ""){
 
             echo "
                 <script>
@@ -30,7 +29,7 @@
         }
 
 
-        $sql = "INSERT INTO subjects (subject_code, subject, description) VALUES ('$subject_code', '$subject', ' $description')";
+        $sql = "INSERT INTO subjects (teacherID, subjectCode, subject_name, description) VALUES ('$teacherID', '$subjectCode','$subject_name', ' $description')";
         $result = $connect->query($sql);
         if (!$result) {
             die("Error Add Data");
@@ -59,15 +58,29 @@
                <a href="subject.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
                 <form class="am-body-box" action = "addSubject.php" autocomplete="off" method = "post"  id = "timeServiceForm">
                 <div class="am-row">
-                        <div class="am-col-12">
+                        <div class="am-col-6">
+                            <p>Teacher ID:</p>
+                            <select name="teacherID" id="teacherID" class="teacherID" required>
+                                <option></option>
+                                <?php 
+                                $classes = $connect->query("SELECT * FROM teachers order by teacherID asc ");
+                                while($row = $classes->fetch_array()):
+                                    ?>
+                                    <option value="<?php echo $row['teacherID'] ?>" <?php echo isset($teacherID) && $teacherID== $row['teacherID'] ? "selected" : '' ?>>
+                                        <?php echo ucwords($row['teacherID']) ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        <div class="am-col-6">
                             <p>Subject Code:</p>
-                            <input type="text" name="subject_code" id="subject_code" required>
+                            <input type="text" name="subjectCode" id="subjectCode" required>
                         </div>
                     </div>
                     <div class="am-row">
                         <div class="am-col-12">
-                            <p>Subject:</p>
-                            <input type="text" name="subject" id="subject" required>
+                            <p>Subject Name:</p>
+                            <input type="text" name="subject_name" id="subject_name" required>
                         </div>
                     </div>
                     <div class="am-row">

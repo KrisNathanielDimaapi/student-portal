@@ -1,28 +1,26 @@
 <?php
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
 
-$levelsection = "";
+include("../phpFiles/dbConnect.php");
+
+$level = "";
+$section = "";
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-    if (!isset($_GET['id'])) {
+    if (!isset($_GET['classID'])) {
         header("location: classes.php");
         exit;
     }
 
-    $id = $_GET['id'];
+    $classID = $_GET['classID'];
 
-    $sql = "SELECT * FROM classes WHERE id = ?";
+    $sql = "SELECT * FROM classes WHERE classID = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $classID);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -36,21 +34,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit;
     }
 
-    $levelsection = $row['levelsection'];
+    $level = $row['level'];
+    $section = $row['section'];
 
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $id = $_POST['id'];
-    $levelsection = $_POST['levelsection'];
+    $classID = $_POST['classID'];
+    $level = $_POST['level'];
+    $section = $_POST['section'];
 
-    if (empty($levelsection)) {
+    if (empty($level) || empty($section)) {
         echo "<script>alert('All fields cannot be empty');</script>";
         die();
     }
 
-    $sql = "UPDATE classes SET levelsection = ? WHERE id = ?";
+    $sql = "UPDATE classes SET level = ?, section = ? WHERE classID = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("si", $levelsection, $id);
+    $stmt->bind_param("ssi", $level, $section, $classID);
     $stmt->execute();
 
     if (!$stmt) {
@@ -82,12 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             </div>
             <a href="classes.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
             <form class="am-body-box" action="edit.php" autocomplete="off" method="post">
-                <input type="hidden" name="id" value="<?php echo $id; ?>">
+                <input type="hidden" name="classID" value="<?php echo $classID; ?>">
 
                 <div class="am-row">
-                    <div class="am-col-12">
+                    <div class="am-col-6">
                         <p>Level & Section:</p>
-                        <input type="text" name="levelsection" id="levelsection" value="<?php echo $levelsection; ?>" required>
+                        <input type="text" name="level" id="level" value="<?php echo $level; ?>" required>
+                    </div>
+                    <div class="am-col-6">
+                        <p>Level & Section:</p>
+                        <input type="text" name="section" id="section" value="<?php echo $section; ?>" required>
                     </div>
                 </div>
                 <div class="buttonCont">

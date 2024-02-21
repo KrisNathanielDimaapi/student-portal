@@ -47,9 +47,6 @@ if (!$result) {
             <h1>Account Management</h1>
             <div class="main-content">
                 <div class="contain">
-                    <div class="button">
-                        <a href="addAccount.php"><i class="fa-solid fa-plus"></i></a>
-                    </div>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get" class="search">
                         <input type="text" name="searchKeyword" value="<?php echo $searchKeyword; ?>" placeholder="  Search">
                         <i class="fa-solid fa-magnifying-glass"></i>

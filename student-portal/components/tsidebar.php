@@ -1,4 +1,6 @@
 <?php
+
+
 include("../phpFiles/dbConnect.php"); // Include your database connection file
 
 // Check if the user is logged in
@@ -51,13 +53,13 @@ $teacherDetails = mysqli_fetch_assoc($resultTeacher);
     </div>
     <ul class="menu">
         <li>
-            <a href="reviews.php">
+            <a href="../pages/reviews.php">
                 <i class="fa-solid fa-file-medical"></i>
                 <span>Review of Teaching Subjects</span>
             </a>
         </li>
         <li>
-            <a href="classes.php">
+            <a href="../pages/classes.php">
                 <i class="fa-solid fa-people-roof"></i>
                 <span>Classes</span>
             </a>
@@ -69,7 +71,7 @@ $teacherDetails = mysqli_fetch_assoc($resultTeacher);
             </a>
         </li>
         <li>
-            <a href="student.php">
+            <a href="../pages/studentRecord.php">
                 <i class="fas fa-clipboard"></i>
                 <span>Student Record</span>
             </a>

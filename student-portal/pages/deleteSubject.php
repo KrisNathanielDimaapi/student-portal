@@ -1,19 +1,13 @@
 <?php
-
-$host = "localhost";
-$username  = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+ if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+include("../phpFiles/dbConnect.php");
 
-if(isset($_GET['id'])){
-    $id = $_GET['id'];
+if(isset($_GET['subjectID'])){
+    $subjectID = $_GET['subjectID'];
 
-    $sql = "DELETE FROM subjects WHERE id=$id";
+    $sql = "DELETE FROM subjects WHERE subjectID=$subjectID";
     $connect->query($sql);
 }
 

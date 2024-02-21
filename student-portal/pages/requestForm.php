@@ -1,15 +1,9 @@
 <?php
-session_start(); // Start the session
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
-}
+    include("../phpFiles/dbConnect.php");
 ?>
 
 
@@ -27,11 +21,7 @@ if ($connect->connect_error) {
 <body>
         <div class="sidebar">
             <?php 
-                if(isset($_SESSION["accRole"]) && $_SESSION["accRole"] == "Teacher"){
-                    include('adminSidebar.php'); 
-                }else{
-                    include('sidebar.php'); 
-                } 
+                 include('../components/ssidebar.php'); 
             ?>  
 
         <div class="container">

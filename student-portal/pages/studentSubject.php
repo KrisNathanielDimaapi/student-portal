@@ -22,7 +22,7 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM subjects  WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM subjects WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
     $sql = "SELECT * FROM subjects";
@@ -42,16 +42,14 @@ $result = $connect->query($sql);
 <body>
     <div class="container">
         <?php 
-            include('../components/tsidebar.php'); 
+            include('../components/ssidebar.php');  
         ?>  
         <main>
           <h1>Subjects</h1>
 
           <div class="main-content">
             <div class="contain">
-            <div class="button">
-                        <a href="addSubject.php"><i class="fa-solid fa-plus"></i></a>
-                    </div>
+
               <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get" class="search" id="upd-form">
                 <input type="text" name="searchKeyword" value="<?php echo $searchKeyword; ?>" placeholder="  Search">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -59,7 +57,7 @@ $result = $connect->query($sql);
             </div>
             <?php
               echo "<table>";
-              echo "<tr><th>#</th><th>Teacher ID</th><th>Subject Code</th><th>Subject Name</th><th>Description</th><th>Action</th></tr>";
+              echo "<tr><th>#</th><th>Teacher ID</th><th>Subject Code</th><th>Subject Name</th><th>Description</th></tr>";
               if ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
                     $id = $row["subjectID"];
@@ -69,7 +67,7 @@ $result = $connect->query($sql);
                     echo "<td>" . $row["subjectCode"] . "</td>";
                     echo "<td>" . $row["subject_name"] . "</td>";
                     echo "<td>" . $row["description"] . "</td>";
-                    echo "<td><button class='edit'><a href='./editSubject.php?subjectID=$row[subjectID]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteSubject.php?subjectID=$row[subjectID]'><i class='fas fa-trash'></i></a></button></td>";
+                    
   
                   }
                   echo "</div>";
@@ -84,10 +82,10 @@ $result = $connect->query($sql);
                     <div class = "paginationMain">
                         <?php
                             $query = "SELECT COUNT(*) FROM subjects";
-                            $baseUrl = "subject.php";
+                            $baseUrl = "studentSubject.php";
                             
                             if (!empty($searchKeyword)) {
-                                $query .= "  WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
+                                $query .= " WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
                                 $baseUrl .= "?searchKeyword=$searchKeyword";
                             } else {
                                 $baseUrl .= "?";

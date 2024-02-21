@@ -1,15 +1,9 @@
 <?php
-session_start(); // Start the session
-
-$host = "localhost";
-$username  = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+ if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+
+include("../phpFiles/dbConnect.php");
 
 $recordPerPage = 13;
 
@@ -28,7 +22,7 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM classes WHERE id LIKE '%$searchKeyword%' OR levelsection LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM classes WHERE classID LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
     $sql = "SELECT * FROM classes";
@@ -48,11 +42,7 @@ $result = $connect->query($sql);
 <body>
     <div class="container">
         <?php 
-            if($_SESSION["accRole"] == "Teacher"){
-                include('adminSidebar.php'); 
-            }else{
-                include('sidebar.php'); 
-            } 
+            include('../components/tsidebar.php'); 
         ?>  
         <main>
           <h1>Classes</h1>
@@ -69,14 +59,15 @@ $result = $connect->query($sql);
             </div>
             <?php
               echo "<table>";
-              echo "<tr><th>#</th><th>Level & Section</th><th>Action</th></tr>";
+              echo "<tr><th>#</th><th>Level</th><th>Section</th><th>Action</th></tr>";
               if ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
-                    $id = $row["id"];
+                    $id = $row["classID"];
                     echo "<tr>";
-                    echo "<td>" . $row["id"] . "</td>";
-                    echo "<td>" . $row["levelsection"] . "</td>";
-                    echo "<td><button class='edit'><a href='./edit.php?id=$row[id]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteClass.php?id=$row[id]'><i class='fas fa-trash'></i></a></button></td>";
+                    echo "<td>" . $row["classID"] . "</td>";
+                    echo "<td>" . $row["level"] . "</td>";
+                    echo "<td>" . $row["section"] . "</td>";
+                    echo "<td><button class='edit'><a href='./edit.php?classID=$row[classID]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteClass.php?classID=$row[classID]'><i class='fas fa-trash'></i></a></button></td>";
   
                   }
                   echo "</div>";
@@ -94,7 +85,7 @@ $result = $connect->query($sql);
                             $baseUrl = "classes.php";
                             
                             if (!empty($searchKeyword)) {
-                                $query .= " WHERE id LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
+                                $query .= " WHERE classID LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
                                 $baseUrl .= "?searchKeyword=$searchKeyword";
                             } else {
                                 $baseUrl .= "?";

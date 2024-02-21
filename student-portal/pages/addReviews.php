@@ -1,47 +1,43 @@
 <?php
-    $host = "localhost";
-    $username  = "root";
-    $password = "";
-    $db = "student_portal";
-    
-    $connect = new mysqli($host, $username, $password, $db);
-    if ($connect->connect_error) {
-        die("Error Connect to DB" . $connect->connect_error);
-    }
-   
-    $email = "";
-    $subject = "";
-    $instructor = "";
-    $review = "";
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+include("../phpFiles/dbConnect.php");
 
-        $email = $_POST['email'];
-        $subject = $_POST['subject'];
-        $instructor = $_POST['instructor'];
-        $review = $_POST['review'];
+$subject_name = "";
+$studentName = "";
+$teacherName = "";
+$evaluation = "";
 
-        if($email == "" || $subject == "" || $instructor == "" || $review == ""){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $subject_name = $_POST['subject_name'];
+    $studentName = $_POST['studentName'];
+    $teacherName = $_POST['teacherName'];
+    $evaluation = $_POST['evaluation'];
 
-            echo "
-                <script>
-                    alert('All Field Can Not Empty');
-                </script>
-            ";
-        }
+    if ( $subject_name == "" || $studentName == "" ||  $teacherName == "" || $evaluation == "") {
 
+        echo "
+            <script>
+                alert('All Field Can Not Be Empty');
+            </script>
+        ";
+    } else {
+        $sql = "INSERT INTO reviews ( subject_name, studentName, teacherName, evaluation) VALUES ('$subject_name', '$studentName', '$teacherName', '$evaluation')";
 
-        $sql = "INSERT INTO reviews (email, subject, instructor, review) VALUES ('$email', '$subject', '$instructor', '$review')";
-        $result = $connect->query($sql);
+        $result = mysqli_query($connect, $sql);
+
         if (!$result) {
-            die("Error Add Data");
+            die("Error: " . mysqli_error($connect));
+        } else {
+            header('location: reviews.php');
+            exit;
         }
-
-        header('location: reviews.php');
-        exit;
     }
-
+}
 ?>
+
 
 <!DOCTYPE html>
   <html lang="en">
@@ -59,38 +55,46 @@
                </div>
                <a href="reviews.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
                 <form class="am-body-box" action = "addReviews.php" autocomplete="off" method = "post"  id = "timeServiceForm">
-                <div>
-                        <div>
-                            <p>Email: </p>
-                            <input type="text" name="email" id="email" required>
-                        </div>
-                    </div>
                 <div class="am-row">
                         <div class="am-col-12">
-                        <p>Subject:</p>
-                        <select name="subject" id="subject" class="subject" required>
+                            <p>Subject:</p>
+                            <select name="subject_name" id="subject_name" class="subject_name" required>
                             <option></option>
                             <?php 
-                            $classes = $connect->query("SELECT * FROM subjects order by subject asc ");
+                            $classes = $connect->query("SELECT * FROM subjects order by subject_name asc ");
                             while($row = $classes->fetch_array()):
                                 ?>
-                                <option value="<?php echo $row['subject'] ?>" <?php echo isset($subject) && $subject== $row['subject'] ? "selected" : '' ?>>
-                                    <?php echo ucwords($row['subject']) ?>
+                                <option value="<?php echo $row['subject_name'] ?>" <?php echo isset($subject_name) && $subject_name== $row['subject_name'] ? "selected" : '' ?>>
+                                    <?php echo ucwords($row['subject_name']) ?>
                                 </option>
                             <?php endwhile; ?>
                             </select>
+                        </div>                   
+                    </div>
+                    <div class="am-row">
+                        <div class="am-col-6">
+                            <p>Student Name:</p>
+                            <input type="text" name="studentName" id="studentName" required>
+                        </div>
+                        <div class="am-col-6">
+                        <p>Teacher Name:</p>
+                            <select name="teacherName" id="teacherName" class="teacherName" required>
+                                <option></option>
+                                <?php 
+                                $classes = $connect->query("SELECT * FROM teachers order by full_name asc ");
+                                while($row = $classes->fetch_array()):
+                                    ?>
+                                    <option value="<?php echo $row['full_name'] ?>" <?php echo isset($full_name) && $full_name== $row['full_name'] ? "selected" : '' ?>>
+                                        <?php echo ucwords($row['full_name']) ?>
+                                    </option>
+                                <?php endwhile; ?>
+                                </select>
                         </div>
                     </div>
                     <div class="am-row">
                         <div class="am-col-12">
-                            <p>Instructor:</p>
-                            <input type="text" name="instructor" id="instructor" required>
-                        </div>
-                    </div>
-                    <div class="am-row">
-                        <div class="am-col-12">
-                            <p>Review:</p>
-                            <textarea name="review" id="review" cols="3" rows="10" require></textarea>
+                            <p>Evaluation:</p>
+                            <textarea name="evaluation" id="evaluation" cols="3" rows="10" require></textarea>
                         </div>
                     </div>
                     <div class="buttonCont">

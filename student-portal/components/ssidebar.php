@@ -30,8 +30,6 @@ $userDetails = mysqli_fetch_assoc($resultUser);
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -63,27 +61,33 @@ $userDetails = mysqli_fetch_assoc($resultUser);
     
     <ul class="menu">
         <li>
-            <a href="classes.php">
+            <a href="../pages/studentClasses.php">
                 <i class="fa-solid fa-people-roof"></i>
                 <span>Classes</span>
             </a>
         </li>
         <li>
-            <a href="subject.php">
+            <a href="../pages/studentSubject.php">
                 <i class="fa-solid fa-book"></i>
                 <span>Subjects</span>
             </a>
         </li>
         <li>
-            <a href="result.php">
+            <a href="../pages/result.php">
                 <i class="fa-solid fa-square-poll-vertical"></i>
                 <span>View Grades</span>
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="../pages/studentReviews.php">
                 <i class="fa-solid fa-square-poll-vertical"></i>
                 <span>Review</span>
+            </a>
+        </li>
+        <li>
+            <a href="../pages/requestForm.php">
+                <i class="fas fa-clipboard"></i>
+                <span>Request Form</span>
             </a>
         </li>
         <li>
@@ -113,5 +117,5 @@ $userDetails = mysqli_fetch_assoc($resultUser);
     </ul>
 </nav>
 
-<div>
+
     

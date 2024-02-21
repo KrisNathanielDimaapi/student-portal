@@ -45,7 +45,7 @@ include("../phpFiles/dbConnect.php");
 <body>
     <div class="container">
         <?php 
-                include('../components/tsidebar.php'); 
+            include('../components/ssidebar.php'); 
         ?>  
         <main>
           <h1>Review of Teaching Subjects</h1>
@@ -85,7 +85,7 @@ include("../phpFiles/dbConnect.php");
                     <div class = "paginationMain">
                         <?php
                             $query = "SELECT COUNT(*) FROM reviews";
-                            $baseUrl = "reviews.php";
+                            $baseUrl = "studentReviews.php";
                             if (!empty($searchKeyword)) {
                                 $query .= " WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
                                 $baseUrl .= "?searchKeyword=$searchKeyword";

@@ -1,23 +1,22 @@
 <?php
-    $host = "localhost";
-    $username  = "root";
-    $password = "";
-    $db = "student_portal";
-    
-    $connect = new mysqli($host, $username, $password, $db);
-    if ($connect->connect_error) {
-        die("Error Connect to DB" . $connect->connect_error);
-    }
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+include("../phpFiles/dbConnect.php");
    
-    $levelsection= "";
+    $level= "";
+    $section= "";
+
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
-        $levelsection = $_POST['levelsection'];
+        $level = $_POST['level'];
+        $section = $_POST['section'];
 
 
 
-        if($levelsection == ""){
+        if($level == "" || $section == ""){
 
             echo "
                 <script>
@@ -27,7 +26,7 @@
         }
 
 
-        $sql = "INSERT INTO classes (levelsection) VALUES ('$levelsection')";
+        $sql = "INSERT INTO classes (level, section) VALUES ('$level', '$section')";
         $result = $connect->query($sql);
         if (!$result) {
             die("Error Add Data");
@@ -56,9 +55,13 @@
                <a href="classes.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
                 <form class="am-body-box" action = "addClasses.php" autocomplete="off" method = "post"  id = "timeServiceForm">
                     <div class="am-row">
-                        <div class="am-col-12">
-                            <p>Level & Section:</p>
-                            <input type="text" name="levelsection" id="levelsection" required>
+                        <div class="am-col-6">
+                            <p>Level:</p>
+                            <input type="text" name="level" id="level" required>
+                        </div>
+                        <div class="am-col-6">
+                            <p>Section:</p>
+                            <input type="text" name="section" id="section" required>
                         </div>
                     </div>
                     <div class="buttonCont">

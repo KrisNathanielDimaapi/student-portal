@@ -19,7 +19,7 @@ $searchKeyword = "";
 
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
-    $sql = "SELECT * FROM teachers WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM teachers WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR address LIKE '%$searchKeyword%' OR level_section LIKE '%$searchKeyword%'";
 } else {
     $sql = "SELECT * FROM teachers";
 }
@@ -39,7 +39,7 @@ $result = $connect->query($sql);
 <body>
     <div class="container">
         <?php 
-                include('../components/ssidebar.php');  
+             include('../components/ssidebar.php'); 
         ?>  
         <main>
             <h1>Teacher Information</h1>
@@ -77,10 +77,10 @@ $result = $connect->query($sql);
                     <div class="paginationMain">
                         <?php
                         $query = "SELECT COUNT(*) FROM teachers";
-                        $baseUrl = "teacher.php";
+                        $baseUrl = "teacherContact.php";
 
                         if (!empty($searchKeyword)) {
-                            $query .= " WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%'";
+                            $query .= " WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR address LIKE '%$searchKeyword%' OR level_section LIKE '%$searchKeyword%'";
                             $baseUrl .= "?searchKeyword=$searchKeyword";
                         } else {
                             $baseUrl .= "?";

@@ -1,7 +1,7 @@
 <?php
-// if (session_status() == PHP_SESSION_NONE) {
-//     session_start();
-// }
+ if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 include("../phpFiles/dbConnect.php");
 
 // Check if the user is logged in
@@ -49,7 +49,6 @@ $userDetails = mysqli_fetch_assoc($resultUser);
 
     
         <?php
-
         include('ssidebar.php'); 
         ?>
 
