@@ -12,5 +12,5 @@ body{
   background-repeat: no-repeat;
   background-attachment:fixed;
   height: 100vh;
-  overflow: hidden;
+  /* overflow: hidden; */
 }

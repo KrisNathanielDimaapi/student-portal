@@ -1,15 +1,5 @@
 <?php
-session_start(); // Start the session
-
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
-}
+include("../phpFiles/dbConnect.php");
 
 $recordPerPage = 13;
 
@@ -28,7 +18,7 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM students WHERE id LIKE '%$searchKeyword%' OR student_code LIKE '%$searchKeyword%' OR firstname LIKE '%$searchKeyword%' OR middleaname LIKE '%$searchKeyword%' OR lastname LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR address LIKE '%$searchKeyword%' OR class_id LIKE '%$searchKeyword%' OR";
+    $sql = "SELECT * FROM students WHERE studentID LIKE '%$searchKeyword%' OR studentCode LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
     $sql = "SELECT * FROM students";
@@ -50,11 +40,7 @@ $result = $connect->query($sql);
 <body>
     <div class="container">
         <?php
-        if ($_SESSION["accRole"] == "Teacher") {
             include('adminSidebar.php');
-        } else {
-            include('sidebar.php');
-        }
         ?>
         <main>
             <h1>Student Record</h1>
@@ -73,42 +59,43 @@ $result = $connect->query($sql);
                 </div>
                 <?php
                 echo "<table>";
-                echo "<tr><th>#</th><th>Student Code</th><th>First Name</th><th>Middle Name</th><th>Last Name</th><th>Sex</th><th>Address</th><th>Class</th><th>Action</th></tr>";
+                echo "<tr><th>#</th><th>Student Code</th><th>Name</th><th>Sex</th><th>Contact</th><th>Address</th><th>Class</th><th>Action</th></tr>";
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $id = $row["id"];
+                        $id = $row["studentID"];
                         echo "<tr>";
-                        echo "<td>" . $row["id"] . "</td>";
-                        echo "<td>" . $row["student_code"] . "</td>";
-                        echo "<td>" . $row["firstname"] . "</td>";
-                        echo "<td>" . $row["middlename"] . "</td>";
-                        echo "<td>" . $row["lastname"] . "</td>";
+                        echo "<td>" . $row["studentID"] . "</td>";
+                        echo "<td>" . $row["studentCode"] . "</td>";
+                        echo "<td>" . $row["full_name"] . "</td>";
                         echo "<td>" . $row["gender"] . "</td>";
+                        echo "<td>" . $row["contact"] . "</td>";
                         echo "<td>" . $row["address"] . "</td>";
-                        echo "<td>" . $row["class_id"] . "</td>";
-                        echo "<td><button class='edit'><a href='./editStudent.php?id=$row[id]'><i class='fas fa-edit'></i></a></button>
-                            <button class='delete'><a href='./deleteStudent.php?id=$row[id]'><i class='fas fa-trash'></i></a></button></td>";
+                        echo "<td>" . $row["level_section"] . "</td>";
+                        echo "<td>
+                        <button class='edit'><a href='./editStudent.php?studentID=$row[studentID]&page=$page'><i class='fas fa-edit'></i></a></button>
+                        <button class='delete'><a href='./deleteStudent.php?studentID=$row[studentID]&page=$page'><i class='fas fa-trash'></i></a></button>
+                      </td>";
                     }
                     echo "</div>";
-                    //   echo "</table><br>";
 
                 } else {
-                    echo "<tr><td colspan = '12' id = 'noRes'>No Results</td></tr>";
+                    echo "<tr><td colspan='12' id='noRes'>No Results</td></tr>";
                 }
                 echo "</table><br>";
                 ?>
                 <div class="paginationCont">
                     <div class="paginationMain">
                         <?php
-                        $query = "SELECT COUNT(*) FROM classes";
-                        $baseUrl = "classes.php";
+                        $query = "SELECT COUNT(*) FROM students";
+                        $baseUrl = "students.php";
 
                         if (!empty($searchKeyword)) {
-                            $query .= " WHERE id LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
+                            $query .= " WHERE studentID LIKE '%$searchKeyword%' OR studentCode LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%'";
                             $baseUrl .= "?searchKeyword=$searchKeyword";
                         } else {
                             $baseUrl .= "?";
                         }
+                        
                         include("../pages/pagination.php");
                         ?>
                     </div>

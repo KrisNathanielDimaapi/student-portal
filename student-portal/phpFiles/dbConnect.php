@@ -1,12 +1,11 @@
 <?php
-    $dbServer = "localhost";
-    $dbUser = "root";
-    $dbPassword = "";
-    $dbName = "student_portal";
+$host = "localhost";
+$username = "root";
+$password = "";
+$db = "school_portal";
 
-    try{
-        $conn = mysqli_connect($dbServer, $dbUser, $dbPassword, $dbName);
-    }catch(mysqli_sql_exception){
-        echo "Connection Error!";
-    }
+$connect = new mysqli($host, $username, $password, $db);
+if ($connect->connect_error) {
+    die("Error Connect to DB: " . $connect->connect_error);
+}
 ?>

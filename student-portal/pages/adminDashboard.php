@@ -23,11 +23,11 @@
 <body>
     <div class="container">
         <?php 
-            if(isset($_SESSION["accRole"]) && $_SESSION["accRole"] == "Teacher"){
+            // if(isset($_SESSION["accRole"]) && $_SESSION["accRole"] == "Teacher"){
                 include('adminSidebar.php'); 
-            }else{
-                include('sidebar.php'); 
-            } 
+            // }else{
+            //     include('sidebar.php'); 
+            // } 
         ?>  
     </div>
 </body>

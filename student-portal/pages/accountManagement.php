@@ -1,44 +1,34 @@
 <?php
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
+include("../phpFiles/dbConnect.php");
 
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 13;
+
+if (isset($_GET["page"])) {
+    $page = $_GET["page"];
+} else {
+    $page = 1;
 }
-  
-  $searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
 
-  $recordPerPage = 13;  
-    
-    if (isset($_GET["page"])) {    
-        $page = $_GET["page"];    
-    }    
-    else {    
-        $page = 1;    
-    }    
+$startPage = ($page - 1) * $recordPerPage;
 
-  $startPage = ($page-1) * $recordPerPage;
+// Modify the SQL query to use the "account_view" view
+$sql = "SELECT name, email, role FROM account_view";
 
-  //normal function
-  $sql = "SELECT accountID, accFirstName, accLastName, accEmail,  accPassword, accRole FROM accounts";
-          
-  //search if search not empty
-  if (!empty($searchKeyword)) {
-      $sql .= " WHERE accFirstName LIKE '%$searchKeyword%' OR accLastName LIKE '%$searchKeyword%' OR accEmail LIKE '%$searchKeyword%' OR accPassword LIKE '%$searchKeyword%' OR accRole LIKE '%$searchKeyword%'";
-  }
+// Search if search not empty
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR role LIKE '%$searchKeyword%'";
+}
 
-  $sql .= " LIMIT $startPage, $recordPerPage;";
+$sql .= " LIMIT $startPage, $recordPerPage;";
 
-  $result = $connect->query($sql);
-  $totalRecords = mysqli_num_rows($result);
+$result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
 
-  if (!$result) {
-      die("Error in SQL query: " . $connect->error);
-  }
-
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,72 +37,63 @@ if ($connect->connect_error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bauan Technical High School - Student Portal</title>
-    <?php include("../pages/header.php");?>
+    <?php include("../pages/header.php"); ?>
     <link rel="stylesheet" href="../styles/reviews.css">
 </head>
 <body>
     <div class="container">
-        <?php include('adminSidebar.php'); ?>    
+        <?php include('adminSidebar.php'); ?>
         <main>
-          <h1>Account Management</h1>
-          <div class="main-content">
-            <div class="contain">
-            <div class="button">
+            <h1>Account Management</h1>
+            <div class="main-content">
+                <div class="contain">
+                    <div class="button">
                         <a href="addAccount.php"><i class="fa-solid fa-plus"></i></a>
                     </div>
-              <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get" class="search">
-                <input type="text" name="searchKeyword" value="<?php echo $searchKeyword; ?>" placeholder="  Search">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </form>
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get" class="search">
+                        <input type="text" name="searchKeyword" value="<?php echo $searchKeyword; ?>" placeholder="  Search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </form>
+                </div>
+                <?php
+                echo "<table>";
+                echo "<tr><th>Name</th><th>Email</th><th>Role</th>";
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . $row["name"] . "</td>";
+                        echo "<td>" . $row["email"] . "</td>";
+                        echo "<td>" . $row["role"] . "</td>";
+
+                        echo "</td>";
+
+                    }
+                    echo "</div>";
+                    echo "</table><br>";
+                } else {
+                    echo "<tr><td colspan='5' id='noRes'>No Results</td></tr>";
+                    echo "</table><br>";
+                }
+                ?>
             </div>
-            <?php
-              echo "<table>";
-              echo "<tr><th>Account ID</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Password</th><th>Role</th><th>Action</th>";
-              if ($result->num_rows > 0) {
-                  while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>" . $row["accountID"] . "</td>";
-                    echo "<td>" . $row["accFirstName"] . "</td>";
-                    echo "<td>" . $row["accLastName"] . "</td>";
-                    echo "<td>" . $row["accEmail"] . "</td>";
-                    echo "<td>" . $row["accPassword"] . "</td>";
-                    echo "<td>" . $row["accRole"] . "</td>";
-  
-                    echo "</td>";
-  
-                    echo "<td>
-                            <div class='action-buttons'>
-                                <button class='edit'><a href='./editAccount.php?accountID=$row[accountID]'><i class='fas fa-edit'></i></a></button>
-                                <button class='delete' onclick = 'return confirm(\"Are you sure you want to delete this account?\");'><a href='./deleteAccount.php?accountID=$row[accountID]'><i class='fa-solid fa-trash'></i></a></button>
-                          </td>";
-                    echo "</tr>";
-                    
-                  }
-                  echo "</div>";
-                  echo "</table><br>";
-              } else {
-                  echo "<tr><td colspan = '7' id = 'noRes'>No Results</td></tr>";
-                  echo "</table><br>";
-              }
-            ?>
-          </div>
-          <div class = "paginationCont">
-              <div class = "paginationMain">
-                  <?php
-                      $query = "SELECT COUNT(*) FROM accounts";
-                      $baseUrl = "accountManagement.php";
-                      if (!empty($searchKeyword)) {
-                          $query .= " WHERE accFirstName LIKE '%$searchKeyword%' OR accLastName LIKE '%$searchKeyword%' OR accEmail LIKE '%$searchKeyword%' OR accPassword LIKE '%$searchKeyword%' OR accRole LIKE '%$searchKeyword%'";
-                          $baseUrl .= "?searchKeyword=$searchKeyword";
-                      }else{
-                          $baseUrl .= "?";
-                      }
-                      include("../pages/pagination.php");
-                  ?>    
-              </div>
-          </div>
-        </main> 
-  </div>
+            <div class="paginationCont">
+                <div class="paginationMain">
+                    <?php
+                    $query = "SELECT COUNT(*) FROM account_view";
+                    $baseUrl = "accountManagement.php";
+                    if (!empty($searchKeyword)) {
+                        $query .= " WHERE name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR role LIKE '%$searchKeyword%'";
+                        $baseUrl .= "?searchKeyword=$searchKeyword";
+                    } else {
+                        $baseUrl .= "?";
+                    }
+                    // Pass $connect to pagination.php
+                    include("../pages/pagination.php");
+                    ?>
+                </div>
+            </div>
+        </main>
+    </div>
 
 </body>
 </html>

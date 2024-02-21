@@ -1,33 +1,23 @@
 <?php
+include("../phpFiles/dbConnect.php");
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
-}
-
-$firstname = "";
-$middlename = "";
-$lastname = "";
+$full_name = "";
 $address = "";
-$class_id = "";
+$contact = "";
+$email = "";
+$id = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-    if (!isset($_GET['id'])) {
+    if (!isset($_GET['studentID'])) {
         header("location: student.php");
         exit;
     }
 
-    $id = $_GET['id'];
+    $id = $_GET['studentID'];
 
-    $sql = "SELECT * FROM students WHERE id = ?";
+    $sql = "SELECT * FROM students WHERE studentID = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("s", $id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -41,30 +31,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit;
     }
 
-    $id = $row["id"];
-    $firstname = $row["firstname"];
-    $middlename = $row["middlename"];
-    $lastname = $row["lastname"];
+    $full_name = $row["full_name"];
     $address = $row["address"];
-    $class_id = $row["class_id"];
-
+    $contact = $row["contact"];
+    $email = $row["email"];
+    $sex = $row["gender"];
+    $level_section = $row["level_section"];
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = isset($_POST['studentID']) ? $_POST['studentID'] : (isset($_POST['id']) ? $_POST['id'] : '');
 
-    $id = isset($_POST['id']) ? $_POST['id'] : '';
-    $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : '';
-    $middlename = isset($_POST['middlename']) ? $_POST['middlename'] : '';
-    $lastname = isset($_POST['lastname']) ? $_POST['lastname'] : '';
+    $full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
     $address = isset($_POST['address']) ? $_POST['address'] : '';
-    $class_id = isset($_POST['class_id']) ? $_POST['class_id'] : '';
+    $contact = isset($_POST['contact']) ? $_POST['contact'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $sex = isset($_POST['gender']) ? $_POST['gender'] : '';
+    $level_section = isset($_POST['level_section']) ? $_POST['level_section'] : '';
 
-    if (empty($firstname) || empty($middlename) || empty($lastname) || empty($address) || empty($class_id)) {
+    // Validate and sanitize input data
+    // Add your validation logic here
+
+    if (empty($full_name) || empty($address) || empty($contact) || empty($email)) {
         echo "<script>alert('All fields cannot be empty');</script>";
         die();
     }
 
-    $sql = "UPDATE students SET firstname = ?, middlename = ?, lastname = ?, address = ?, class_id = ? WHERE id = ?";
+    $sql = "UPDATE students SET full_name = ?, address = ?, contact = ?, email = ?, gender = ?, level_section = ? WHERE studentID = ?";
     $stmt = $connect->prepare($sql);
-    $stmt->bind_param("sssssi", $firstname, $middlename, $lastname, $address, $class_id, $id);
+    $stmt->bind_param("sssssss", $full_name, $address, $contact, $email, $sex, $level_section, $id);    
     $stmt->execute();
 
     if ($stmt->affected_rows === -1) {
@@ -72,7 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         die();
     }
 
-    header("location: student.php");
+    // Redirect back to student.php with pagination information
+    if (isset($_POST['page'])) {
+        $page = $_POST['page'];
+        header("location: student.php?page=$page");
+    } else {
+        header("location: student.php");
+    }
     exit;
 }
 ?>
@@ -91,49 +90,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <div class="am-container">
         <div class="am-body">
             <div class="am-head">
-                <h1>Edit Students</h1>
+                <h1>Edit Student Information</h1>
             </div>
             <a href="student.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
             <form class="am-body-box" action="editStudent.php" autocomplete="off" method="post" id="timeServiceForm">
-                <input type="hidden" name="id" value="<?php echo $id; ?>">
+                <input type="hidden" name="studentID" value="<?php echo $id; ?>">
+
+                <!-- Add hidden input for the page information -->
+                <input type="hidden" name="page" value="<?php echo isset($_GET['page']) ? $_GET['page'] : ''; ?>">
 
                 <div class="am-row">
-                    <div class="am-col-12">
-                        <p>First Name:</p>
-                        <input type="text" name="firstname" id="firstname" value="<?php echo $firstname; ?>" required>
+                    <div class="am-col-6">
+                        <p>Name:</p>
+                        <input type="text" name="full_name" id="full_name" value="<?php echo $full_name; ?>" required>
+                    </div>
+                    <div class="am-col-6">
+                        <p>Contact:</p>
+                        <input type="text" name="contact" id="contact" value="<?php echo $contact; ?>" required>
                     </div>
                 </div>
                 <div class="am-row">
-                    <div class="am-col-12">
-                        <p>Middle Name:</p>
-                        <input type="text" name="middlename" id="middlename" value="<?php echo $middlename; ?>" required>
+                    <div class="am-col-6">
+                        <p>Email:</p>
+                        <input type="text" name="email" id="email" value="<?php echo $email; ?>" required>
+                    </div>
+                    <div class="am-col-6">
+                        <p>Sex:</p>
+                        <input type="text" name="gender" id="gender" value="<?php echo $sex ?>" required>
                     </div>
                 </div>
                 <div class="am-row">
-                    <div class="am-col-12">
-                        <p>Last Name:</p>
-                        <input type="text" name="lastname" id="lastname" value="<?php echo $lastname; ?>" required>
-                    </div>
-                </div>
-                <div class="am-row">
-                    <div class="am-col-12">
+                    <div class="am-col-6">
                         <p>Address:</p>
                         <input type="text" name="address" id="address" value="<?php echo $address; ?>" required>
                     </div>
-                </div>
-                <div class="am-row">
-                    <div class="am-col-12">
-                        <p>Class:</p>
-                        <select name="class_id" id="class_id" class="class_id" required>
-                            <?php 
-                            $classes = $connect->query("SELECT * FROM classes order by levelsection asc ");
-                            while($row = $classes->fetch_array()):
-                                ?>
-                                <option value="<?php echo $row['levelsection'] ?>" <?php echo isset($class_id) && $class_id == $row['levelsection'] ? "selected" : ''; ?>>
-                                    <?php echo ucwords($row['levelsection']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
+                    <div class="am-col-6">
+                        <p>Section:</p>
+                        <input type="text" name="level_section" id="level_section" value="<?php echo $level_section; ?>" required>
                     </div>
                 </div>
                 <div class="buttonCont">

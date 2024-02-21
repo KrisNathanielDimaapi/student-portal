@@ -1,79 +1,94 @@
-
 <?php
-    $host = "localhost";
-    $username  = "root";
-    $password = "";
-    $db = "student_portal";
-    
-    $connect = new mysqli($host, $username, $password, $db);
-    if ($connect->connect_error) {
-        die("Error Connect to DB" . $connect->connect_error);
+include("../phpFiles/dbConnect.php"); // Adjust the path accordingly
+
+session_start();
+$errorPrompt = array();
+
+if (isset($_POST["login"])) {
+    $emailLog = $_POST["emailLogin"];
+    $passLog = $_POST["passwordLogin"];
+
+    // Check in the admin table
+    $checkAdmin = "SELECT * FROM admin WHERE user = '$emailLog'";
+    $resultAdmin = mysqli_query($connect, $checkAdmin);
+
+    // Check in the teachers table
+    $checkTeacher = "SELECT * FROM teachers WHERE email = '$emailLog'";
+    $resultTeacher = mysqli_query($connect, $checkTeacher);
+
+    // Check in the students table
+    $checkStudent = "SELECT * FROM students WHERE email = '$emailLog'";
+    $resultStudent = mysqli_query($connect, $checkStudent);
+
+    if (mysqli_num_rows($resultAdmin) > 0) {
+        $row = mysqli_fetch_assoc($resultAdmin);
+        $dbRole = "admin";
+    } elseif (mysqli_num_rows($resultTeacher) > 0) {
+        $row = mysqli_fetch_assoc($resultTeacher);
+        $dbRole = "teacher";
+    } elseif (mysqli_num_rows($resultStudent) > 0) {
+        $row = mysqli_fetch_assoc($resultStudent);
+        $dbRole = "student";
+    } else {
+        echo "<script>alert('Incorrect Email or Password. Please try again.');</script>";
+        exit();
     }
+
+    $dbEmail = $row["email"];
+    $dbPass = $row["password"];
+    if ($dbPass != $passLog) {
+        echo "<script>alert('Incorrect Password. Please try again.');</script>";
+    } else {
+        $_SESSION["activeUser"] = $row["email"]; // Update to store the email
+        $_SESSION["accRole"] = $dbRole;
+        $_SESSION['loggedIn'] = true;
     
-    session_start();
-    $errorPrompt = array();
-    
-    if(isset($_POST["login"])){
-        $emailLog = $_POST["emailLogin"];
-        $passLog= $_POST["passwordLogin"];
-        
-        $checkExistence = "SELECT * FROM accounts WHERE accEmail = '$emailLog'";
-        try{
-            $resultExist = mysqli_query($connect, $checkExistence);
-        }catch(mysqli_sql_exception){
-            echo "<script>alert('Incorrect Password. Please try again.');</script>";
-	        exit();
-
-        }
-
-        if(mysqli_num_rows($resultExist) > 0){
-            $row = mysqli_fetch_assoc($resultExist);
-            $dbAccountRole = $row["accRole"];
-            $dbEmail = $row["accEmail"];
-            $dbPass = $row["accPassword"];
-
-            if($dbPass != $passLog){
-                echo "<script>alert('Incorrect Password. Please try again.');</script>";
-            }else{
-                $_SESSION["activeUser"] = $row["accFirstName"] . " ". $row["accLastName"];
-                $_SESSION["accRole"] = $dbAccountRole;
-                $_SESSION['loggedIn'] = true;
+        // Redirect based on user role
+        switch ($dbRole) {
+            case "admin":
                 header("Location: adminDashboard.php");
-            }
-        }else{
-            echo "<script>alert('Incorrect Email or Password. Please try again.');</script>";
+                break;
+            case "teacher":
+                header("Location: ../components/teacherDashboard.php");
+                break;
+            case "student":
+                header("Location: ../components/studentDashboard.php");
+                break;
         }
     }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bauan Technical High School - Student Portal</title>
+    <title>Student Portal</title>
     <?php include("../pages/header.php");?>
     <link rel="stylesheet" href = "../styles/loginReg.css">
     <script type="text/javascript" src ="../scripts/loginLoad.js"></script>
 </head>
-    <body>
+
+<body>
     <div class="center">
-      <h1>STUDENT PORTAL</h1>
-      <form action="login.php" method="post">
-        <div class="txt_field">
-          <input type="text" name="emailLogin" required>
-          <span></span>
-          <label>Username</label>
-        </div>
-        <div class="txt_field">
-          <input type="password" name="passwordLogin" required>
-          <span></span>
-          <label>Password</label>
-        </div>
-        
-        <input type = "submit" id ="submitBtn" class = "mainBtn" name = "login" value = "LOG IN" onclick= "e.preventDefault()">
-      </form>
+        <h1>Login</h1>
+        <form action="login.php" method="post">
+            <div class="txt_field">
+                <input type="text" name="emailLogin" required>
+                <span></span>
+                <label>Email</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" name="passwordLogin" required>
+                <span></span>
+                <label>Password</label>
+            </div>
+
+            <input type="submit" id="submitBtn" class="mainBtn" name="login" value="LOG IN">
+        </form>
     </div>
-        
-    </body>
+</body>
+
 </html>
