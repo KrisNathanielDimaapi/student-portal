@@ -77,7 +77,7 @@ $teacherDetails = mysqli_fetch_assoc($resultTeacher);
             </a>
         </li>
         <li>
-            <a href="result.php">
+            <a href="../pages/result.php">
                 <i class="fa-solid fa-square-poll-vertical"></i>
                 <span>Add Grades</span>
             </a>

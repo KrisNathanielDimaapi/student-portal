@@ -1,15 +1,9 @@
 <?php
-session_start(); // Start the session
-
-$host = "localhost";
-$username = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+ if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+
+include("../phpFiles/dbConnect.php");
 
 $recordPerPage = 13;
 
@@ -28,10 +22,10 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM student_results_view WHERE result_id LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
-    $sql = "SELECT * FROM student_results_view";
+    $sql = "SELECT * FROM grades";
 }
 
 $result = $connect->query($sql);
@@ -49,13 +43,10 @@ $result = $connect->query($sql);
 
 <body>
     <div class="container">
-        <?php 
-            if($_SESSION["accRole"] == "Teacher"){
-                include('adminSidebar.php'); 
-            } else {
-                include('sidebar.php'); 
-            } 
+    <?php 
+                include('../components/tsidebar.php'); 
         ?>  
+        <main>
         <main>
           <h1>Grades</h1>
 
@@ -71,16 +62,16 @@ $result = $connect->query($sql);
             </div>
             <?php
               echo "<table>";
-              echo "<tr><th>#</th><th>Name</th><th>Subject</th><th>Marks</th></tr>";
+              echo "<tr><th>#</th><th>Student Name</th><th>Subject</th><th>Marks</th><th>Actions</th></tr>";
               if ($result->num_rows > 0) {
                   while ($row = $result->fetch_assoc()) {
-                    $id = $row["result_id"];
+                    $id = $row["gradeID"];
                     echo "<tr>";
-                    echo "<td>" . $row["result_id"] . "</td>";
-                    echo "<td>" . $row["firstname"] . " " . $row["middlename"] . " " . $row["lastname"] . "</td>";
+                    echo "<td>" . $row["gradeID"] . "</td>";
+                    echo "<td>" . $row["studName"] .  "</td>";
                     echo "<td>" . $row["subject"] . "</td>";
-                    echo "<td>" . $row["marks"] . "</td>";
-                    echo "<td><button class='edit'><a href='./editSubject.php?id=$row[result_id]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteSubject.php?id=$row[result_id]'><i class='fas fa-trash'></i></a></button></td>";
+                    echo "<td>" . $row["grade"] . "</td>";
+                    echo "<td><button class='edit'><a href='./editGrade.php?id=$row[gradeID]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteGrade.php?id=$row[gradeID]'><i class='fas fa-trash'></i></a></button></td>";
                   }
                   echo "</div>";
                 } else {
@@ -91,7 +82,7 @@ $result = $connect->query($sql);
             <div class="paginationCont">
                 <div class="paginationMain">
                     <?php
-                        $query = "SELECT COUNT(*) FROM student_results_view";
+                        $query = "SELECT COUNT(*) FROM grades";
                         $baseUrl = "your_page_name.php";
                         
                         if (!empty($searchKeyword)) {

@@ -1,41 +1,37 @@
 <?php
-$host = "localhost";
-$username  = "root";
-$password = "";
-$db = "student_portal";
-
-$connect = new mysqli($host, $username, $password, $db);
-if ($connect->connect_error) {
-    die("Error Connect to DB" . $connect->connect_error);
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
+
+include("../phpFiles/dbConnect.php");
 
 $levelsection = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $levelsection = $_POST['levelsection'];
-
-    $student_id = $_POST['student_id'];
+    $student_id = $_POST['studentID'];
+    $studName = $_POST['full_name'];
     $subject = $_POST['subject'];
-    $marks = $_POST['marks'];
+    $marks = $_POST['grade'];
 
-    if ($levelsection == "") {
-        echo "<script>alert('All Field Can Not Empty');</script>";
+    if (empty($student_id) || empty($subject) || empty($marks)) {
+        echo "<script>alert('All Fields Cannot Be Empty');</script>";
     }
 
-    $sql = "INSERT INTO students_results_view (student_id, firstname, middlename, lastname, subject, marks) VALUES ('$student_id', '$firstname', '$middlename', '$lastname', '$subject', '$marks')";
+    $sql = "INSERT INTO grades (studentID, studName, subject, grade) VALUES ('$student_id', '$studName', '$subject', '$marks')";
+
     $result = $connect->query($sql);
 
     if (!$result) {
-        die("Error Add Data");
+        die("Error Adding Data");
     }
 
     header('location: results.php');
     exit;
 }
 
-$studentQuery = "SELECT id, CONCAT(firstname, ' ', middlename, ' ', lastname) AS fullname FROM students";
+$studentQuery = "SELECT studentID, full_name FROM students";
 $studentsResult = $connect->query($studentQuery);
-$subjectQuery = "SELECT subject_code, subject FROM subjects";
+$subjectQuery = "SELECT subjectID, subject_name FROM subjects";
 $subjectsResult = $connect->query($subjectQuery);
 ?>
 
@@ -60,10 +56,11 @@ $subjectsResult = $connect->query($subjectQuery);
                 <div class="am-row">
                     <div class="am-col-12">
                         <p>Select Student:</p>
-                        <select name="student_id" required>
+                        <select name="studentID" required>
+                            <option value="">Select student</option>
                             <?php
                             while ($student = $studentsResult->fetch_assoc()) {
-                                echo "<option value='{$student['id']}'>{$student['fullname']}</option>";
+                                echo "<option value='{$student['studentID']}'>{$student['full_name']}</option>";
                             }
                             ?>
                         </select>
@@ -73,9 +70,10 @@ $subjectsResult = $connect->query($subjectQuery);
                     <div class="am-col-12">
                         <p>Subject:</p>
                         <select name="subject" id="subject" required>
+                            <option value="">Select subject</option>
                             <?php
                             while ($subject = $subjectsResult->fetch_assoc()) {
-                                echo "<option value='{$subject['subject_code']}'>{$subject['subject']}</option>";
+                                echo "<option value='{$subject['subjectID']}'>{$subject['subject_name']}</option>";
                             }
                             ?>
                         </select>
@@ -84,7 +82,7 @@ $subjectsResult = $connect->query($subjectQuery);
                 <div class="am-row">
                     <div class="am-col-12">
                         <p>Marks:</p>
-                        <input type="text" name="marks" id="marks" required>
+                        <input type="int" name="marks" id="marks" required>
                     </div>
                 </div>
                 <div class="buttonCont">
@@ -93,6 +91,7 @@ $subjectsResult = $connect->query($subjectQuery);
                     </div>
                 </div>
             </form>
+
             <div class="am-footer">
                 <p>Bauan Technical High School - Student Portal</p>
             </div>
