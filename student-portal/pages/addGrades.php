@@ -9,24 +9,63 @@ $levelsection = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $student_id = $_POST['studentID'];
-    $studName = $_POST['full_name'];
-    $subject = $_POST['subject'];
-    $marks = $_POST['grade'];
+    $studName = ""; // Initialize $studName to an empty string
 
-    if (empty($student_id) || empty($subject) || empty($marks)) {
+    // Retrieve the student's name from the database based on the selected studentID
+    $studentNameQuery = "SELECT full_name FROM students WHERE studentID = '$student_id'";
+    $studentNameResult = $connect->query($studentNameQuery);
+
+    if ($studentNameResult->num_rows > 0) {
+        $student = $studentNameResult->fetch_assoc();
+        $studName = $student['full_name'];
+    } else {
+        // Handle the case where the student with the given ID is not found
+        echo "<script>alert('Error: Selected student not found');</script>";
+        exit;
+    }
+
+    $subject_id = $_POST['subjectID'];
+    $subject_name = ""; // Initialize $subject_name to an empty string
+
+    $subjectNameQuery = "SELECT subject_name FROM subjects WHERE subjectID = '$subject_id'";
+    $subjectNameResult = $connect->query($subjectNameQuery);
+
+    if ($subjectNameResult->num_rows > 0) {
+        $subject = $subjectNameResult->fetch_assoc();
+        $subject_name = $subject['subject_name'];
+    } else {
+        // Handle the case where the subject with the given ID is not found
+        echo "<script>alert('Error: Selected subject not found');</script>";
+        exit;
+    }
+
+    $marks = $_POST['marks'];
+
+    if (empty($student_id) || empty($subject_id) || empty($marks)) {
         echo "<script>alert('All Fields Cannot Be Empty');</script>";
+    } else {
+        // Get teacherID from the session
+        $teacher_id = $_SESSION['teacherID'] ?? '';
+
+        // Check if the teacherID is valid before inserting
+        $checkTeacherQuery = "SELECT teacherID FROM teachers WHERE teacherID = '$teacher_id'";
+        $checkTeacherResult = $connect->query($checkTeacherQuery);
+
+        if ($checkTeacherResult->num_rows == 0) {
+            die("Error: Invalid teacherID");
+        }
+
+        $sql = "INSERT INTO grades (studentID, teacherID, subjectID, studName, subject, grade) VALUES ('$student_id', '$teacher_id', '$subject_id', '$studName', '$subject_name', '$marks')";
+
+        $result = $connect->query($sql);
+
+        if (!$result) {
+            die("Error Adding Data: " . $connect->error);
+        }
+
+        header('location: result.php');
+        exit;
     }
-
-    $sql = "INSERT INTO grades (studentID, studName, subject, grade) VALUES ('$student_id', '$studName', '$subject', '$marks')";
-
-    $result = $connect->query($sql);
-
-    if (!$result) {
-        die("Error Adding Data");
-    }
-
-    header('location: results.php');
-    exit;
 }
 
 $studentQuery = "SELECT studentID, full_name FROM students";
@@ -69,7 +108,7 @@ $subjectsResult = $connect->query($subjectQuery);
                 <div class="am-row">
                     <div class="am-col-12">
                         <p>Subject:</p>
-                        <select name="subject" id="subject" required>
+                        <select name="subjectID" id="subject" required>
                             <option value="">Select subject</option>
                             <?php
                             while ($subject = $subjectsResult->fetch_assoc()) {
@@ -82,7 +121,7 @@ $subjectsResult = $connect->query($subjectQuery);
                 <div class="am-row">
                     <div class="am-col-12">
                         <p>Marks:</p>
-                        <input type="int" name="marks" id="marks" required>
+                        <input type="number" name="marks" id="marks" required>
                     </div>
                 </div>
                 <div class="buttonCont">

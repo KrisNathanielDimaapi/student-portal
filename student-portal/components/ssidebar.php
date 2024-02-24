@@ -73,7 +73,7 @@ $userDetails = mysqli_fetch_assoc($resultUser);
             </a>
         </li>
         <li>
-            <a href="../pages/result.php">
+            <a href="../pages/viewGrades.php">
                 <i class="fa-solid fa-square-poll-vertical"></i>
                 <span>View Grades</span>
             </a>

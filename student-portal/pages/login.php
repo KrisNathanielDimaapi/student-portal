@@ -26,9 +26,11 @@ if (isset($_POST["login"])) {
     } elseif (mysqli_num_rows($resultTeacher) > 0) {
         $row = mysqli_fetch_assoc($resultTeacher);
         $dbRole = "teacher";
+        $_SESSION["teacherID"] = $row["teacherID"];
     } elseif (mysqli_num_rows($resultStudent) > 0) {
         $row = mysqli_fetch_assoc($resultStudent);
         $dbRole = "student";
+        $_SESSION["studentID"] = $row["studentID"];
     } else {
         echo "<script>alert('Incorrect Email or Password. Please try again.');</script>";
         exit();
