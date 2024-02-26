@@ -71,7 +71,7 @@ $result = $connect->query($sql);
                     echo "<td>" . $row["studName"] .  "</td>";
                     echo "<td>" . $row["subject"] . "</td>";
                     echo "<td>" . $row["grade"] . "</td>";
-                    echo "<td><button class='edit'><a href='./editGrade.php?id=$row[gradeID]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteGrade.php?id=$row[gradeID]'><i class='fas fa-trash'></i></a></button></td>";
+                    echo "<td><button class='edit'><a href='./editGrade.php?gradeID=$row[gradeID]'><i class='fas fa-edit'></i></a></button><button class='delete'><a href='./deleteGrade.php?gradeID=$row[gradeID]'><i class='fas fa-trash'></i></a></button></td>";
                   }
                   echo "</div>";
                 } else {
