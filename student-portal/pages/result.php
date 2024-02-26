@@ -22,7 +22,7 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
     $sql = "SELECT * FROM grades";
@@ -46,7 +46,7 @@ $result = $connect->query($sql);
     <?php 
                 include('../components/tsidebar.php'); 
         ?>  
-        <main>
+
         <main>
           <h1>Grades</h1>
 
@@ -83,10 +83,10 @@ $result = $connect->query($sql);
                 <div class="paginationMain">
                     <?php
                         $query = "SELECT COUNT(*) FROM grades";
-                        $baseUrl = "your_page_name.php";
+                        $baseUrl = "result.php";
                         
                         if (!empty($searchKeyword)) {
-                            $query .= " WHERE result_id LIKE '%$searchKeyword%'";
+                            $query .= " WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
                             $baseUrl .= "?searchKeyword=$searchKeyword";
                         } else {
                             $baseUrl .= "?";

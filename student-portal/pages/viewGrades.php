@@ -22,7 +22,7 @@ $searchKeyword = "";
 if (isset($_GET["searchKeyword"])) {
     $searchKeyword = $_GET["searchKeyword"];
     // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%'";
+    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
 } else {
     // Default query without search
     // Retrieve the student ID of the logged-in user
@@ -50,14 +50,11 @@ $result = $connect->query($sql);
                 include('../components/ssidebar.php'); 
         ?>  
         <main>
-        <main>
           <h1>Grades</h1>
 
           <div class="main-content">
             <div class="contain">
-            <div class="button">
-                        <a href="addGrades.php"><i class="fa-solid fa-plus"></i></a>
-                    </div>
+
               <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get" class="search" id="upd-form">
                 <input type="text" name="searchKeyword" value="<?php echo $searchKeyword; ?>" placeholder="  Search">
                 <i class="fa-solid fa-magnifying-glass"></i>

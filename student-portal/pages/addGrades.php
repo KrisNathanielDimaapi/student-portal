@@ -90,7 +90,7 @@ $subjectsResult = $connect->query($subjectQuery);
             <div class="am-head">
                 <h1>Grades</h1>
             </div>
-            <a href="classes.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
+            <a href="result.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
             <form class="am-body-box" action="addGrades.php" autocomplete="off" method="post" id="timeServiceForm">
                 <div class="am-row">
                     <div class="am-col-12">
