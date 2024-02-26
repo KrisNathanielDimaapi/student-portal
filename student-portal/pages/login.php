@@ -31,6 +31,7 @@ if (isset($_POST["login"])) {
         $row = mysqli_fetch_assoc($resultStudent);
         $dbRole = "student";
         $_SESSION["studentID"] = $row["studentID"];
+        $_SESSION["full_name"] = $studentName;
     } else {
         echo "<script>alert('Incorrect Email or Password. Please try again.');</script>";
         exit();

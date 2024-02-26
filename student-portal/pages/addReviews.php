@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $teacherName = $_POST['teacherName'];
     $evaluation = $_POST['evaluation'];
 
-    if ( $subject_name == "" || $studentName == "" ||  $teacherName == "" || $evaluation == "") {
+    if ($subject_name == "" || $studentName == "" ||  $teacherName == "" || $evaluation == "") {
 
         echo "
             <script>
@@ -24,7 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </script>
         ";
     } else {
-        $sql = "INSERT INTO reviews ( subject_name, studentName, teacherName, evaluation) VALUES ('$subject_name', '$studentName', '$teacherName', '$evaluation')";
+        // Retrieve subject ID
+        $subjectQuery = $connect->query("SELECT subjectID FROM subjects WHERE subject_name = '$subject_name'");
+        $subjectID = $subjectQuery->fetch_assoc()['subjectID'];
+
+        // Retrieve student ID
+        $studentQuery = $connect->query("SELECT studentID FROM students WHERE full_name = '$studentName'");
+        $studentID = $studentQuery->fetch_assoc()['studentID'];
+
+        // Retrieve teacher ID
+        $teacherQuery = $connect->query("SELECT teacherID FROM teachers WHERE full_name = '$teacherName'");
+        $teacherID = $teacherQuery->fetch_assoc()['teacherID'];
+
+        // Modify the SQL query to include foreign keys
+        $sql = "INSERT INTO reviews (subjectID, studentID, teacherID, subject_name, studentName, teacherName, evaluation) 
+        VALUES ('$subjectID', '$studentID', '$teacherID', '$subject_name', '$studentName', '$teacherName', '$evaluation')";
 
         $result = mysqli_query($connect, $sql);
 
@@ -40,73 +54,88 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Bauan Technical High School - Student Portal</title>
-      <link rel="stylesheet" href="../styles/forms.css" />
-      <?php include("../pages/header.php");?>
-    </head>
-    <body>
-        <div class="am-container">
-            <div class="am-body">
-               <div class="am-head">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Bauan Technical High School - Student Portal</title>
+    <link rel="stylesheet" href="../styles/forms.css" />
+    <?php include("../pages/header.php"); ?>
+    <style>
+        nav {
+            display: none;
+        }
+
+        #teacherName[readonly] {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="am-container">
+        <?php
+        include('../components/tsidebar.php');
+        ?>
+        <div class="am-body">
+            <div class="am-head">
                 <h1>Add Review of Teaching Subject</h1>
-               </div>
-               <a href="reviews.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
-                <form class="am-body-box" action = "addReviews.php" autocomplete="off" method = "post"  id = "timeServiceForm">
+            </div>
+            <a href="reviews.php"><i class="fas fa-arrow-alt-circle-left"></i></a>
+            <form class="am-body-box" action="addReviews.php" autocomplete="off" method="post" id="timeServiceForm">
                 <div class="am-row">
-                        <div class="am-col-12">
-                            <p>Subject:</p>
-                            <select name="subject_name" id="subject_name" class="subject_name" required>
-                            <option></option>
-                            <?php 
+                    <div class="am-col-12">
+                        <p>Subject:</p>
+                        <select name="subject_name" id="subject_name" class="subject_name" required>
+                            <option>Select Subject</option>
+                            <?php
                             $classes = $connect->query("SELECT * FROM subjects order by subject_name asc ");
-                            while($row = $classes->fetch_array()):
-                                ?>
-                                <option value="<?php echo $row['subject_name'] ?>" <?php echo isset($subject_name) && $subject_name== $row['subject_name'] ? "selected" : '' ?>>
+                            while ($row = $classes->fetch_array()) :
+                            ?>
+                                <option value="<?php echo $row['subject_name'] ?>" <?php echo isset($subject_name) && $subject_name == $row['subject_name'] ? "selected" : '' ?>>
                                     <?php echo ucwords($row['subject_name']) ?>
                                 </option>
                             <?php endwhile; ?>
-                            </select>
-                        </div>                   
+                        </select>
                     </div>
-                    <div class="am-row">
-                        <div class="am-col-6">
-                            <p>Student Name:</p>
-                            <input type="text" name="studentName" id="studentName" required>
-                        </div>
-                        <div class="am-col-6">
-                        <p>Teacher Name:</p>
-                            <select name="teacherName" id="teacherName" class="teacherName" required>
-                                <option></option>
-                                <?php 
-                                $classes = $connect->query("SELECT * FROM teachers order by full_name asc ");
-                                while($row = $classes->fetch_array()):
-                                    ?>
-                                    <option value="<?php echo $row['full_name'] ?>" <?php echo isset($full_name) && $full_name== $row['full_name'] ? "selected" : '' ?>>
-                                        <?php echo ucwords($row['full_name']) ?>
-                                    </option>
-                                <?php endwhile; ?>
-                                </select>
-                        </div>
-                    </div>
-                    <div class="am-row">
-                        <div class="am-col-12">
-                            <p>Evaluation:</p>
-                            <textarea name="evaluation" id="evaluation" cols="3" rows="10" require></textarea>
-                        </div>
-                    </div>
-                    <div class="buttonCont">
-                        <div class="am-col-3">
-                                <input type ='submit' name = 'finalSubmitOld'  id = 'finalSubmit' value = 'SUBMIT'>
-                        </div>
-                    </div>
-                </form>
-                <div class="am-footer">
-                    <p>Bauan Technical High School - Student Portal</p>
                 </div>
+                <div class="am-row">
+                    <div class="am-col-6">
+                        <p>Student Name:</p>
+                        <select name="studentName" id="studentName" required>
+                            <option>Select Student</option>
+                            <?php
+                            $studentsQuery = $connect->query("SELECT * FROM students ORDER BY full_name ASC ");
+                            while ($student = $studentsQuery->fetch_array()) :
+                            ?>
+                                <option value="<?php echo $student['full_name'] ?>" <?php echo isset($studentName) && $studentName == $student['full_name'] ? "selected" : '' ?>>
+                                    <?php echo ucwords($student['full_name']) ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="am-col-6">
+                        <p>Teacher Name:</p>
+                        <input type="text" name="teacherName" id="teacherName" value="<?php echo isset($teacherDetails) ? $teacherDetails['full_name'] : ''; ?>" readonly>
+                    </div>
+                </div>
+                <div class="am-row">
+                    <div class="am-col-12">
+                        <p>Evaluation:</p>
+                        <textarea name="evaluation" id="evaluation" cols="3" rows="10" require></textarea>
+                    </div>
+                </div>
+                <div class="buttonCont">
+                    <div class="am-col-3">
+                        <input type='submit' name='finalSubmitOld' id='finalSubmit' value='SUBMIT'>
+                    </div>
+                </div>
+            </form>
+            <div class="am-footer">
+                <p>Bauan Technical High School - Student Portal</p>
             </div>
         </div>
-    </body>
-  </html>
+    </div>
+</body>
+
+</html>

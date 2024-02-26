@@ -26,8 +26,8 @@ include("../phpFiles/dbConnect.php");
             // Modify the SQL query to include the search condition
             $sql = "SELECT * FROM reviews WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
         } else {
-            // Default query without search
-            $sql = "SELECT * FROM reviews";
+            $loggedInteacherID = $_SESSION["teacherID"];
+            $sql = "SELECT * FROM reviews WHERE teacherID = $loggedInteacherID";
         }
 
         $result = $connect->query($sql);
@@ -73,7 +73,7 @@ include("../phpFiles/dbConnect.php");
                     echo "<td>" . $row["teacherName"] . "</td>";
                     echo "<td>" . $row["evaluation"] . "</td>";
                   }
-                  echo "</div>";
+                //   echo "</div>";
                 //   echo "</table><br>";
                   
                 } else {
