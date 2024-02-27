@@ -6,7 +6,9 @@ if (session_status() == PHP_SESSION_NONE) {
 include("../phpFiles/dbConnect.php");
 
 
-$recordPerPage = 13;
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 8;
 
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -16,20 +18,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-// Initialize search keyword
-$searchKeyword = "";
 
-// Check if a search keyword is provided
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM reviews WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
-} else {
-    $loggedInStudentID = $_SESSION["studentID"];
-    $sql = "SELECT * FROM reviews WHERE studentID = $loggedInStudentID";
+$sql = "SELECT * FROM reviews";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
 }
 
+$sql .= " ORDER BY reviewID ASC, studentName ASC LIMIT $startPage, $recordPerPage;";
+
 $result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
 
 <!DOCTYPE html>

@@ -6,31 +6,32 @@
 include("../phpFiles/dbConnect.php");
         
     
-    $recordPerPage = 13;  
-            
-        if (isset($_GET["page"])) {    
-            $page = $_GET["page"];    
-        }    
-        else {    
-            $page = 1;    
-        }    
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
 
-        $startPage = ($page-1) * $recordPerPage;     
+$recordPerPage = 8;
 
-        // Initialize search keyword
-        $searchKeyword = "";
+if (isset($_GET["page"])) {
+    $page = $_GET["page"];
+} else {
+    $page = 1;
+}
 
-        // Check if a search keyword is provided
-        if (isset($_GET["searchKeyword"])) {
-            $searchKeyword = $_GET["searchKeyword"];
-            // Modify the SQL query to include the search condition
-            $sql = "SELECT * FROM reviews WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
-        } else {
-            $loggedInteacherID = $_SESSION["teacherID"];
-            $sql = "SELECT * FROM reviews WHERE teacherID = $loggedInteacherID";
-        }
+$startPage = ($page - 1) * $recordPerPage;
 
-        $result = $connect->query($sql);
+
+$sql = "SELECT * FROM reviews";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE reviewID LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR studentName LIKE '%$searchKeyword%' OR teacherName LIKE '%$searchKeyword%' OR evaluation LIKE '%$searchKeyword%'";
+}
+
+$sql .= " ORDER BY reviewID ASC, studentName ASC LIMIT $startPage, $recordPerPage;";
+
+$result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
 
 <!DOCTYPE html>

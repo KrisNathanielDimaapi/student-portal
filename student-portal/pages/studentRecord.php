@@ -5,7 +5,9 @@
 
 include("../phpFiles/dbConnect.php");
 
-$recordPerPage = 13;
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 10;
 
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -15,21 +17,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-// Initialize search keyword
-$searchKeyword = "";
 
-// Check if a search keyword is provided
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM students WHERE studentID LIKE '%$searchKeyword%' OR studentCode LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%'
-    OR address LIKE '%$searchKeyword%'";
-} else {
-    // Default query without search
-    $sql = "SELECT * FROM students";
+$sql = "SELECT * FROM students";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE studentID LIKE '%$searchKeyword%' OR studentCode LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%'";
 }
 
+$sql .= " ORDER BY studentID ASC, full_name ASC LIMIT $startPage, $recordPerPage;";
+
 $result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +87,7 @@ $result = $connect->query($sql);
                     <div class="paginationMain">
                         <?php
                         $query = "SELECT COUNT(*) FROM students";
-                        $baseUrl = "studentRercord.php";
+                        $baseUrl = "studentRecord.php";
 
                         if (!empty($searchKeyword)) {
                             $query .= " WHERE studentID LIKE '%$searchKeyword%' OR studentCode LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%'

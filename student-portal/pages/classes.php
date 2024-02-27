@@ -5,7 +5,9 @@
 
 include("../phpFiles/dbConnect.php");
 
-$recordPerPage = 13;
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 10;
 
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -15,20 +17,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-// Initialize search keyword
-$searchKeyword = "";
 
-// Check if a search keyword is provided
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM classes WHERE classID LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
-} else {
-    // Default query without search
-    $sql = "SELECT * FROM classes";
+$sql = "SELECT * FROM classes";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE classID LIKE '%$searchKeyword%' OR level LIKE '%$searchKeyword%' OR section LIKE '%$searchKeyword%'";
 }
 
+$sql .= " ORDER BY classID ASC, section ASC LIMIT $startPage, $recordPerPage;";
+
 $result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
  <!DOCTYPE html>
 <html lang="en">

@@ -1,7 +1,9 @@
 <?php
 include("../phpFiles/dbConnect.php");
 
-$recordPerPage = 13;
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 10;
 
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -11,16 +13,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-$searchKeyword = "";
 
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    $sql = "SELECT * FROM teachers WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR address LIKE '%$searchKeyword%'";
-} else {
-    $sql = "SELECT * FROM teachers";
+$sql = "SELECT * FROM teachers";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE teacherID LIKE '%$searchKeyword%' OR full_name LIKE '%$searchKeyword%' OR email LIKE '%$searchKeyword%' OR contact LIKE '%$searchKeyword%' OR gender LIKE '%$searchKeyword%' OR address LIKE '%$searchKeyword%' OR level_section LIKE '%$searchKeyword%'";
 }
 
+$sql .= " ORDER BY teacherID ASC, full_name ASC LIMIT $startPage, $recordPerPage;";
+
 $result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
 
 <!DOCTYPE html>

@@ -5,6 +5,8 @@
 
 include("../phpFiles/dbConnect.php");
 
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
 $recordPerPage = 13;
 
 if (isset($_GET["page"])) {
@@ -15,19 +17,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-// Initialize search keyword
-$searchKeyword = "";
 
-// Check if a search keyword is provided
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM grades WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
-} else {
-    // Default query without search
-    // Retrieve the student ID of the logged-in user
-    $loggedInStudentID = $_SESSION["studentID"];
-    $sql = "SELECT * FROM grades WHERE studentID = $loggedInStudentID";
+$loggedInStudentID = $_SESSION["studentID"];
+$sql = "SELECT * FROM grades WHERE studentID = $loggedInStudentID";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
+}
+
+$sql .= " ORDER BY gradeID ASC, studName ASC LIMIT $startPage, $recordPerPage;";
+
+$result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
 }
 
 
@@ -83,10 +86,10 @@ $result = $connect->query($sql);
                 <div class="paginationMain">
                     <?php
                         $query = "SELECT COUNT(*) FROM grades";
-                        $baseUrl = "your_page_name.php";
+                        $baseUrl = "viewGrades.php";
                         
                         if (!empty($searchKeyword)) {
-                            $query .= " WHERE result_id LIKE '%$searchKeyword%'";
+                            $query .= " WHERE gradeID LIKE '%$searchKeyword%' OR studName LIKE '%$searchKeyword%' OR subject LIKE '%$searchKeyword%' OR grade LIKE '%$searchKeyword%'";
                             $baseUrl .= "?searchKeyword=$searchKeyword";
                         } else {
                             $baseUrl .= "?";
