@@ -5,7 +5,9 @@
 
 include("../phpFiles/dbConnect.php");
 
-$recordPerPage = 13;
+$searchKeyword = isset($_GET['searchKeyword']) ? $_GET['searchKeyword'] : '';
+
+$recordPerPage = 5;
 
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -15,20 +17,20 @@ if (isset($_GET["page"])) {
 
 $startPage = ($page - 1) * $recordPerPage;
 
-// Initialize search keyword
-$searchKeyword = "";
 
-// Check if a search keyword is provided
-if (isset($_GET["searchKeyword"])) {
-    $searchKeyword = $_GET["searchKeyword"];
-    // Modify the SQL query to include the search condition
-    $sql = "SELECT * FROM subjects  WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
-} else {
-    // Default query without search
-    $sql = "SELECT * FROM subjects";
+$sql = "SELECT * FROM subjects";
+
+if (!empty($searchKeyword)) {
+    $sql .= " WHERE subjectID LIKE '%$searchKeyword%' OR teacherID LIKE '%$searchKeyword%' OR subjectCode LIKE '%$searchKeyword%' OR subject_name LIKE '%$searchKeyword%' OR description LIKE '%$searchKeyword%'";
 }
 
+$sql .= " ORDER BY subjectID ASC, subject_name ASC LIMIT $startPage, $recordPerPage;";
+
 $result = $connect->query($sql);
+$totalRecords = mysqli_num_rows($result);
+if (!$result) {
+    die("Error in SQL query: " . $connect->error);
+}
 ?>
  <!DOCTYPE html>
 <html lang="en">
