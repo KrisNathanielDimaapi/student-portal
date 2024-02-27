@@ -1,15 +1,7 @@
 <?php
     session_start(); // Start the session
 
-    $host = "localhost";
-    $username  = "root";
-    $password = "";
-    $db = "student_portal";
-    
-    $connect = new mysqli($host, $username, $password, $db);
-    if ($connect->connect_error) {
-        die("Error Connect to DB" . $connect->connect_error);
-    }
+    include("../phpFiles/dbConnect.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
