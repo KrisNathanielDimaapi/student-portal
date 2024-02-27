@@ -33,30 +33,36 @@ if (isset($_POST["login"])) {
         $_SESSION["studentID"] = $row["studentID"];
         $_SESSION["full_name"] = $studentName;
     } else {
-        echo "<script>alert('Incorrect Email or Password. Please try again.');</script>";
+        echo "<script>alert('Incorrect Email. Please try again.'); window.location.href='login.php';</script>";
         exit();
     }
 
     $dbEmail = $row["email"];
-    $dbPass = $row["password"];
-    if ($dbPass != $passLog) {
-        echo "<script>alert('Incorrect Password. Please try again.');</script>";
+    if ($dbEmail != $emailLog) {
+        echo "<script>alert('Incorrect Email. Please try again.'); window.location.href='login.php';</script>";
+        exit();
     } else {
-        $_SESSION["activeUser"] = $row["email"]; // Update to store the email
-        $_SESSION["accRole"] = $dbRole;
-        $_SESSION['loggedIn'] = true;
-    
-        // Redirect based on user role
-        switch ($dbRole) {
-            case "admin":
-                header("Location: adminDashboard.php");
-                break;
-            case "teacher":
-                header("Location: ../components/teacherDashboard.php");
-                break;
-            case "student":
-                header("Location: ../components/studentDashboard.php");
-                break;
+
+        $dbPass = $row["password"];
+        if ($dbPass != $passLog) {
+            echo "<script>alert('Incorrect Password. Please try again.');</script>";
+        } else {
+            $_SESSION["activeUser"] = $row["email"]; // Update to store the email
+            $_SESSION["accRole"] = $dbRole;
+            $_SESSION['loggedIn'] = true;
+
+            // Redirect based on user role
+            switch ($dbRole) {
+                case "admin":
+                    header("Location: adminDashboard.php");
+                    break;
+                case "teacher":
+                    header("Location: ../components/teacherDashboard.php");
+                    break;
+                case "student":
+                    header("Location: ../components/studentDashboard.php");
+                    break;
+            }
         }
     }
 }
@@ -66,12 +72,12 @@ if (isset($_POST["login"])) {
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal</title>
-    <?php include("../pages/header.php");?>
-    <link rel="stylesheet" href = "../styles/loginReg.css">
-    <script type="text/javascript" src ="../scripts/loginLoad.js"></script>
+    <?php include("../pages/header.php"); ?>
+    <link rel="stylesheet" href="../styles/loginReg.css">
+    <script type="text/javascript" src="../scripts/loginLoad.js"></script>
 </head>
 
 <body>
