@@ -42,7 +42,6 @@ if (isset($_POST["login"])) {
         echo "<script>alert('Incorrect Email. Please try again.'); window.location.href='login.php';</script>";
         exit();
     } else {
-
         $dbPass = $row["password"];
         if ($dbPass != $passLog) {
             echo "<script>alert('Incorrect Password. Please try again.');</script>";
@@ -101,3 +100,5 @@ if (isset($_POST["login"])) {
 </body>
 
 </html>
+
+<!-- login fixed -->
