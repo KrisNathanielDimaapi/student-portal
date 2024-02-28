@@ -23,21 +23,23 @@ if (isset($_POST["login"])) {
     if (mysqli_num_rows($resultAdmin) > 0) {
         $row = mysqli_fetch_assoc($resultAdmin);
         $dbRole = "admin";
+        $dbEmail = $row["user"];
     } elseif (mysqli_num_rows($resultTeacher) > 0) {
         $row = mysqli_fetch_assoc($resultTeacher);
         $dbRole = "teacher";
         $_SESSION["teacherID"] = $row["teacherID"];
+        $dbEmail = $row["email"];
     } elseif (mysqli_num_rows($resultStudent) > 0) {
         $row = mysqli_fetch_assoc($resultStudent);
         $dbRole = "student";
         $_SESSION["studentID"] = $row["studentID"];
-        $_SESSION["full_name"] = $studentName;
+        $_SESSION["full_name"] = $row["studentName"];
+        $dbEmail = $row["email"];
     } else {
         echo "<script>alert('Incorrect Email. Please try again.'); window.location.href='login.php';</script>";
         exit();
     }
 
-    $dbEmail = $row["email"];
     if ($dbEmail != $emailLog) {
         echo "<script>alert('Incorrect Email. Please try again.'); window.location.href='login.php';</script>";
         exit();
@@ -46,7 +48,7 @@ if (isset($_POST["login"])) {
         if ($dbPass != $passLog) {
             echo "<script>alert('Incorrect Password. Please try again.');</script>";
         } else {
-            $_SESSION["activeUser"] = $row["email"]; // Update to store the email
+            $_SESSION["activeUser"] = $dbEmail; // Update to store the email
             $_SESSION["accRole"] = $dbRole;
             $_SESSION['loggedIn'] = true;
 
