@@ -74,6 +74,7 @@ section{
   overflow: hidden;
   z-index: 1;
   border-radius: .5rem;
+  margin-left: 150px;
 }
 
 .btn::before{
@@ -98,6 +99,7 @@ section{
   transform: translateX(-50%);
   min-width: max-content;
   color: var(--secondary);
+
 }
 
 .btn:is(:hover, :focus-visible)::before{
@@ -631,13 +633,14 @@ section{
 
 .blog .box-container{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(50rem, 1fr));
   gap: 1.5rem;
 }
 
 .blog .box-container .box{
   box-shadow: var(--box-shadow);
   border-radius: 2rem;
+  width: 500px;
 }
 
 .blog .box-container .box .image{
@@ -691,6 +694,7 @@ section{
 .blog .box-container .box .content h3{
   font-size: 2.2rem;
   color: var(--black);
+  text-align: center;
 }
 
 .blog .box-container .box .content p{
@@ -698,6 +702,7 @@ section{
   color: var(--black);
   line-height: 2;
   padding: 1rem 0;
+  text-align: justify;
 }
 
 /* ends */
